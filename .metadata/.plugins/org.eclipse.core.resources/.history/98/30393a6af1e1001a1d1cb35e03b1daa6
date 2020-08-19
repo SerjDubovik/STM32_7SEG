@@ -1,0 +1,270 @@
+//#include "stm32f10x.h"
+#include "stm32f1xx.h"
+#include "system.h"
+//********************************************************************************
+//Function: настройкa системы тактирования контроллера STM32F103xx              //
+//          источник сигнала - HSE генератор с кварцем 8MHz через PLL           //
+//return:   0 - ok; 1 - генератор HSE не запустился                             //
+//********************************************************************************
+unsigned char InitClk(void)
+{
+	/*
+    //Частота  SystemCoreClock выше 24 MHz - разрешить буфер предварительной выборки FLASH
+	FLASH->ACR|=  FLASH_ACR_PRFTBE;        //Включить буфер предварительной выборки
+	FLASH->ACR&= ~FLASH_ACR_LATENCY;       //Очистить FLASH_ACR_LATENCY
+	FLASH->ACR |= FLASH_ACR_LATENCY_2;     //Пропускать 2 такта
+
+	//Настройка PLL
+	RCC->CFGR  &= ~RCC_CFGR_PLLSRC;        // источником сигнала для PLL выбран HSI с делителем на 2
+	RCC->CR   &= ~RCC_CR_PLLON;            // Отключить генератор PLL
+	RCC->CFGR &= ~RCC_CFGR_PLLMULL;        // Очистить PLLMULL
+	RCC->CFGR |=  RCC_CFGR_PLLMULL16;      // Коэфициент умножения = 16
+	RCC->CR   |=  RCC_CR_PLLON;            // Включить генератор PLL
+	while((RCC->CR & RCC_CR_PLLRDY)==0) {} // Ожидание готовности PLL
+
+	//Переключится на тактирование от PLL
+	RCC->CFGR &= ~RCC_CFGR_SW;             // Очистка битов выбора источника тактового сигнала
+	RCC->CFGR |=  RCC_CFGR_SW_PLL;         // Выбрать источником тактового сигнала PLL
+	while((RCC->CFGR&RCC_CFGR_SWS)!=0x08){}// Ожидание готовности PLL
+
+	//Настроить делитель для шины APB1
+	RCC->CFGR &= ~RCC_CFGR_PPRE1;          // Очистка битов предделителя "APB1 Prescaler"
+	RCC->CFGR |=  RCC_CFGR_PPRE1_DIV2;     // Установить "APB1 Prescaler" равным 2
+
+	//Настроить делитель для ADC
+	//RCC->CFGR &= ~CFGR_ADCPRE;             // Очистка битов предделителя "ADC Prescaler"
+	//RCC->CFGR |=  CFGR_ADCPRE_DIV8;        // Установить "ADC Prescaler" равным 8
+*/
+	  unsigned long int TimeOut = 10000;
+
+	  //Çàïóñòèòü HSE
+	  RCC->CR   |=  RCC_CR_HSEON;            //Âêëþ÷èòü ãåíåðàòîð HSE
+	  while((RCC->CR & RCC_CR_HSERDY)==0)    //Îæèäàíèå ãîòîâíîñòè HSE
+	  if(TimeOut) TimeOut--;
+	  if(TimeOut==0) return 1;               //Îøèáêà!!! Ãåíåðàòîð HSE íå çàïóñòèëñÿ
+	  RCC->CR   |=  RCC_CR_CSSON;            //Ðàçðåøèòü ðàáîòó ñèñòåìû çàùèòû ñáîÿ HSE
+
+	  RCC->CFGR &= ~RCC_CFGR_PLLXTPRE;       //Íå èñïîëüçîâàòü äåëèòåëü HSE
+
+	  //×àñòîòà  SystemCoreClock âûøå 24 MHz - ðàçðåøèòü áóôåð ïðåäâàðèòåëüíîé âûáîðêè FLASH
+	  FLASH->ACR|=  FLASH_ACR_PRFTBE;        //Âêëþ÷èòü áóôåð ïðåäâàðèòåëüíîé âûáîðêè
+	  FLASH->ACR&= ~FLASH_ACR_LATENCY;       //Î÷èñòèòü FLASH_ACR_LATENCY
+	  FLASH->ACR |= FLASH_ACR_LATENCY_2;     //Ïðîïóñêàòü 2 òàêòà
+
+	  //Íàñòðîéêà PLL
+	  RCC->CFGR  |= RCC_CFGR_PLLSRC;         //Èñòî÷íèêîì ñèãíàëà äëÿ PLL âûáðàí HSE
+	  RCC->CR   &= ~RCC_CR_PLLON;            //Îòêëþ÷èòü ãåíåðàòîð PLL
+	  RCC->CFGR &= ~RCC_CFGR_PLLMULL;        //Î÷èñòèòü PLLMULL
+	  RCC->CFGR |=  RCC_CFGR_PLLMULL9;       //Êîåôèöèåíò óìíîæåíèÿ = 9
+	  RCC->CR   |=  RCC_CR_PLLON;            //Âêëþ÷èòü ãåíåðàòîð PLL
+	  while((RCC->CR & RCC_CR_PLLRDY)==0) {} //Îæèäàíèå ãîòîâíîñòè PLL
+
+	  //Ïåðåêëþ÷èòüñÿ íà òàêòèðîâàíèå îò PLL
+	  RCC->CFGR &= ~RCC_CFGR_SW;             //Î÷èñòêà áèòîâ âûáîðà èñòî÷íèêà òàêòîâîãî ñèãíàëà
+	  RCC->CFGR |=  RCC_CFGR_SW_PLL;         //Âûáðàòü èñòî÷íèêîì òàêòîâîãî ñèãíàëà PLL
+	  while((RCC->CFGR&RCC_CFGR_SWS)!=0x08){}//Îæèäàíèå ïåðåêëþ÷åíèÿ íà PLL
+
+	  //Íàñòðîèòü äåëèòåëü äëÿ øèíû APB1
+	  RCC->CFGR &= ~RCC_CFGR_PPRE1;          //Î÷èñòêà áèòîâ ïðåääåëèòåëÿ "APB1 Prescaler"
+	  RCC->CFGR |=  RCC_CFGR_PPRE1_DIV2;     //Óñòàíîâèòü "APB1 Prescaler" ðàâíûì 2
+
+	  //Íàñòðîèòü äåëèòåëü äëÿ ADC
+	  //RCC->CFGR &= ~CFGR_ADCPRE;             //Î÷èñòêà áèòîâ ïðåääåëèòåëÿ "ADC Prescaler"
+	  //RCC->CFGR |=  CFGR_ADCPRE_DIV6;        //Óñòàíîâèòü "ADC Prescaler" ðàâíûì 6
+
+  return 0;                              //Все ok
+}
+
+//********************************************************************************
+//Function: обработчик прерывания при сбое генератора HSE                       //
+//********************************************************************************
+void NMI_Handler(void)
+{
+  //Сбросить флаг системы контроля сбоя HSE
+  if (RCC->CIR & RCC_CIR_CSSF) RCC->CIR |= RCC_CIR_CSSC;  
+
+  //Если контроллер здесь, значит HSE не работает
+  //Что-то можно предпринять: перезапустить генератор, дать сигнал аврии и т.п.
+}
+//********************************************************************************
+
+/*
+ * число (E10_0 E10_1 E10_2 E10_3 E10_4 E10_5 E10_6) для отображения десятичные цифры
+ * Hex_t - входное шестнадцатиричное число
+ */
+void HEX_to_DEC (char *outarray7,int HexIn)
+{int i;
+	for (i=0; i<6; i++)
+	{*(outarray7+i)=0x30;}
+	//Миллион
+	while (HexIn >= 1000000)
+	{	*(outarray7+0)+=1;
+		HexIn -= 1000000;
+	}
+	//сто тысяч
+	while (HexIn >= 100000)
+	{	*(outarray7+1)+=1;
+		HexIn -= 100000;
+	}
+	//десять тысяч
+	while (HexIn >= 10000)
+	{	*(outarray7+2)+=1;
+		HexIn -= 10000;
+	}
+	//тысяча
+	while (HexIn >= 1000)
+	{	*(outarray7+3)+=1;
+		HexIn -= 1000;
+	}
+	//сто
+	while (HexIn >= 100)
+	{	*(outarray7+4)+=1;
+		HexIn -= 100;
+	}
+	//десять
+	while (HexIn >= 10)
+	{	*(outarray7+5)+=1;
+		HexIn -= 10;
+	}
+	//единица
+	*(outarray7+6)=0x30+HexIn;
+
+}
+//
+
+/*
+ * число (E10_0 E10_1 E10_2 E10_3 E10_4 E10_5 E10_6) для отображения десятичные цифры
+ * Hex_t - входное шестнадцатиричное число
+ */
+void HEX_to_DEC_ms (char *outarray7,int HexIn)
+{int i;
+	for (i=0; i<6; i++)
+	{*(outarray7+i)=0x30;}
+	
+	//Миллион
+	while (HexIn >= 1000000)
+	{	*(outarray7+0)+=1;
+		HexIn -= 1000000;
+	}
+	//первый пробел
+	if(*(outarray7+0)==0x30)
+	{*(outarray7+0)=0x20;}
+	
+	//сто тысяч
+	while (HexIn >= 100000)
+	{	*(outarray7+1)+=1;
+		HexIn -= 100000;
+	}
+	//второй пробел
+	if(*(unsigned short*)(outarray7+0) == 0x3020)
+	{*(outarray7+1)=0x20;}	
+	
+	//десять тысяч
+	while (HexIn >= 10000)
+	{	*(outarray7+2)+=1;
+		HexIn -= 10000;
+	}
+	//третий пробел
+	if((*(unsigned short*)(outarray7+0) == 0x2020) &&(*(outarray7+2)==0x30))
+	{*(outarray7+2)=0x20;}	
+		
+	//тысяча
+	while (HexIn >= 1000)
+	{	*(outarray7+3)+=1;
+		HexIn -= 1000;
+	}
+//----------------------------------
+//запятая
+	*(outarray7+4)=',';
+	//сто
+	while (HexIn >= 100)
+	{	*(outarray7+5)+=1;
+		HexIn -= 100;
+	}
+/*	//десять
+	while (HexIn >= 10)
+	{	*(outarray7+5)+=1;
+		HexIn -= 10;
+	}
+	//единица
+	*(outarray7+6)=0x30+HexIn;
+*/
+}
+//
+/*
+ * число (E10_0 E10_1 E10_2 E10_3 E10_4 E10_5 E10_6) для отображения десятичные цифры
+ * Hex_t - входное шестнадцатиричное число
+ */
+void HEX_to_DEC_ms_PWM (char *outarray7,int HexIn)
+{
+	//тысяча
+	*(outarray7+0)=0x30;
+	while (HexIn >= 1000)
+	{	*(outarray7+0)+=1;
+		HexIn -= 1000;
+	}
+	//первый пробел
+	if(*(outarray7+0)==0x30)
+	{*(outarray7+0)=0x20;}	
+	
+	//сто
+	*(outarray7+1)=0x30;	
+	while (HexIn >= 100)
+	{	*(outarray7+1)+=1;
+		HexIn -= 100;
+	}
+		//второй пробел
+	if(*(unsigned short*)(outarray7+0) == 0x3020)
+	{*(outarray7+1)=0x20;}	
+	
+	//десять
+	*(outarray7+2)=0x30;		
+	while (HexIn >= 10)
+	{	*(outarray7+2)+=1;
+		HexIn -= 10;
+	}
+	//третий пробел
+	if((*(unsigned short*)(outarray7+0) == 0x2020) &&(*(outarray7+2)==0x30))
+	{*(outarray7+2)=0x20;}		
+	
+	//единица
+	*(outarray7+3)=0x30 + HexIn;
+
+}
+//
+/*
+ * число (E10_0 E10_1 E10_2 E10_3 E10_4 E10_5 E10_6) для отображения десятичные цифры
+ * Hex_t - входное шестнадцатиричное число
+ */
+void HEX_to_DEC_P_PWM (char *outarray7,int HexIn)
+{//int i;
+
+	//десять тысяч
+	*(outarray7+0)=0x30;
+	while (HexIn >= 10000)
+	{	*(outarray7+0)+=1;
+		HexIn -= 10000;
+	}
+		//первый пробел
+	if(*(outarray7+0)==0x30)
+	{*(outarray7+0)=0x20;}
+		
+	//тысяча
+	*(outarray7+1)=0x30;	
+	while (HexIn >= 1000)
+	{	*(outarray7+1)+=1;
+		HexIn -= 1000;
+	}
+	//второй пробел
+	if(*(unsigned short*)(outarray7+0) == 0x3020)
+	{*(outarray7+1)=0x20;}		
+//----------------------------------
+	//сто
+	*(outarray7+2)=0x30;		
+	while (HexIn >= 100)
+	{	*(outarray7+2)+=1;
+		HexIn -= 100;
+	}
+
+}
+//

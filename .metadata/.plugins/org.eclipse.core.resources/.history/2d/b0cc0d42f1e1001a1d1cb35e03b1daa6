@@ -1,0 +1,23 @@
+
+
+#ifndef DIGIT_H_
+#define DIGIT_H_
+
+extern void TIM2_IRQHandler (void);
+extern void init_timer2(void);
+extern void init_Digit(void);
+
+extern unsigned short DIG_0;
+extern unsigned short DIG_1;
+extern unsigned short DIG_2;
+extern unsigned short DIG_3;
+extern unsigned short DIG_4;
+extern unsigned short Digit_val [23];
+
+extern int //i,
+flag_next,
+ind;
+
+
+
+#endif /* DIGIT_H_ */

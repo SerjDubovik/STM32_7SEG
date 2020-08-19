@@ -1,0 +1,17 @@
+#include "stm32f10x.h"
+#include "system.h"
+
+#include "digit.h"
+
+int main(void)
+{
+	InitClk();
+	init_timer2();
+	init_Digit();
+
+
+	for(;;)
+	{
+
+	} // скобочка бесконечного цикла
+} // скобочка мейна

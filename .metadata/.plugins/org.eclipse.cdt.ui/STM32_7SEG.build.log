@@ -1,10 +1,16 @@
-20:57:12 **** Incremental Build of configuration Debug for project STM32_7SEG ****
+14:21:49 **** Incremental Build of configuration Debug for project STM32_7SEG ****
 make -j4 all 
 Building file: ../src/main.c
+Building file: ../src/digit.c
+Invoking: MCU GCC Compiler
 Invoking: MCU GCC Compiler
 D:\GIT\GitHub\STM32_7SEG\STM32_7SEG\Debug
+D:\GIT\GitHub\STM32_7SEG\STM32_7SEG\Debug
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -DSTM32 -DSTM32F1 -DSTM32F103C8Tx -DDEBUG -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -I"D:/GIT/GitHub/STM32_7SEG/STM32_7SEG/StdPeriph_Driver/inc" -I"D:/GIT/GitHub/STM32_7SEG/STM32_7SEG/inc" -I"D:/GIT/GitHub/STM32_7SEG/STM32_7SEG/CMSIS/device" -I"D:/GIT/GitHub/STM32_7SEG/STM32_7SEG/CMSIS/core" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"src/digit.d" -MT"src/digit.o" -o "src/digit.o" "../src/digit.c"
 arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -DSTM32 -DSTM32F1 -DSTM32F103C8Tx -DDEBUG -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -I"D:/GIT/GitHub/STM32_7SEG/STM32_7SEG/StdPeriph_Driver/inc" -I"D:/GIT/GitHub/STM32_7SEG/STM32_7SEG/inc" -I"D:/GIT/GitHub/STM32_7SEG/STM32_7SEG/CMSIS/device" -I"D:/GIT/GitHub/STM32_7SEG/STM32_7SEG/CMSIS/core" -O0 -g3 -Wall -fmessage-length=0 -ffunction-sections -c -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.c"
 Finished building: ../src/main.c
+ 
+Finished building: ../src/digit.c
  
 Building target: STM32_7SEG.elf
 Invoking: MCU GCC Linker
@@ -16,8 +22,8 @@ Generating binary and Printing size information:
 arm-none-eabi-objcopy -O binary "STM32_7SEG.elf" "STM32_7SEG.bin"
 arm-none-eabi-size "STM32_7SEG.elf"
    text	   data	    bss	    dec	    hex	filename
-   1216	   1080	   1092	   3388	    d3c	STM32_7SEG.elf
+   2676	   1080	   1116	   4872	   1308	STM32_7SEG.elf
  
 
-20:57:14 Build Finished (took 1s.728ms)
+14:21:52 Build Finished (took 3s.756ms)
 
