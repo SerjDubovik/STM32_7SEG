@@ -263,25 +263,21 @@ if(status & TIM_SR_UIF){
 		GPIOA->BSRR =  GPIO_BSRR_BS3;  //GPIOA.3=0
 		digit_main++;
 
-		GPIOA->BSRR = DIG_0;
-		GPIOB->BSRR = DIG_0;
-
+		GPIOC->BSRR = DIG_0;
 		return;
 	}
 	if( digit_main == 1){
 		GPIOA->BSRR =  GPIO_BSRR_BS6;  //GPIOA.6=0
 		digit_main++;
 
-		GPIOA->BSRR = DIG_1;
-		GPIOB->BSRR = DIG_1;
+		GPIOC->BSRR = DIG_1;
 		return;
 	}
 	if( digit_main ==2){
 		GPIOB->BSRR =  GPIO_BSRR_BS0;  //GPIOB.0=0
 		digit_main=0;
 
-		GPIOA->BSRR = DIG_2;
-		GPIOB->BSRR = DIG_2;
+		GPIOC->BSRR = DIG_2;
 		return;
 	}
 
