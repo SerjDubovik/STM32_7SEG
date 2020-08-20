@@ -7,71 +7,63 @@ unsigned short digit_main = 0, tiker = 0;
 
 
 
-#define sig_a 			GPIO_BSRR_BS4		// A
-#define sig_b 			GPIO_BSRR_BS7		// A
-#define sig_c 			GPIO_BSRR_BS15		// B
-#define sig_d 			GPIO_BSRR_BS13		// B
-#define sig_e 			GPIO_BSRR_BS12		// B
-#define sig_f 			GPIO_BSRR_BS5		// A
-#define sig_g 			GPIO_BSRR_BS8		// A
-#define sig_dp 			GPIO_BSRR_BS14		// B
+#define sig_a 			GPIO_BSRR_BS4
+#define sig_a_port		GPIOA->BSRR
+
+#define sig_b 			GPIO_BSRR_BS7
+#define sig_b_port		GPIOA->BSRR
+
+#define sig_c 			GPIO_BSRR_BS15
+#define sig_c_port		GPIOB->BSRR
+
+#define sig_d 			GPIO_BSRR_BS13
+#define sig_d_port		GPIOB->BSRR
+
+#define sig_e 			GPIO_BSRR_BS12
+#define sig_e_port		GPIOB->BSRR
+
+#define sig_f 			GPIO_BSRR_BS5
+#define sig_f_port		GPIOA->BSRR
+
+#define sig_g 			GPIO_BSRR_BS8
+#define sig_g_port		GPIOA->BSRR
+
+#define sig_dp 			GPIO_BSRR_BS14
+#define sig_dp_port		GPIOB->BSRR
 
 
 
 
-unsigned short Digit_val_portB [23] = {
-		sig_c | sig_d | sig_e,				// 0 // 0 - a-b-c-d-e-f
-		sig_c ,								// 1 // 1 - b-c
-		sig_d | sig_e,						// 2 // 2 - a-b-d-e-g
-		sig_c | sig_d,						// 3 // 3 - a-b-c-d-g
-		sig_c,								// 4 // 4 - b-c-f-g
-		sig_c | sig_d,						// 5 // 5 - a-c-d-f-g
-		sig_c | sig_d | sig_e,				// 6 // 6 - a-c-d-e-f-g
-		sig_c ,								// 7 // 7 - a-b-c
-		sig_c | sig_d | sig_e,				// 8 // 8 - a-b-c-d-e-f-g
-		sig_c | sig_d,						// 9 // 9 - a-b-c-d-f-g
-		sig_c | sig_e,						// 10 // A - a-b-c-e-f-g
-		sig_c | sig_d | sig_e,				// 11 // b - c-d-e-f-g
-		sig_d | sig_e,						// 12 // c - a-d-e-f
-		sig_c | sig_d | sig_e,				// 13 // d - b-c-d-e-g
-		sig_d | sig_e,						// 14 // E - a-d-e-f-g
-		sig_e,								// 15 // F - a-e-f-g
-		sig_c | sig_d | sig_e,				// 16 // U
-		sig_c | sig_e,						// 17 // n
-		sig_c | sig_e,						// 18 // H
-		sig_c | sig_e,						// 19 // h
-		sig_dp,								// 21 // DP
-		sig_e								// 22 // r
+
+unsigned short Digit_val [23] = {
+		sig_a | sig_b | sig_c | sig_d | sig_e | sig_f ,			// 0 // 0 - a-b-c-d-e-f
+		sig_b | sig_c ,											// 1 // 1 - b-c
+		sig_a | sig_b | sig_d | sig_e | sig_g,					// 2 // 2 - a-b-d-e-g
+		sig_a | sig_b | sig_c | sig_d | sig_g,					// 3 // 3 - a-b-c-d-g
+		sig_b | sig_c | sig_f | sig_g,							// 4 // 4 - b-c-f-g
+		sig_a | sig_c | sig_d | sig_f | sig_g,					// 5 // 5 - a-c-d-f-g
+		sig_a | sig_c | sig_d | sig_e | sig_f | sig_g,			// 6 // 6 - a-c-d-e-f-g
+		sig_a | sig_b | sig_c ,									// 7 // 7 - a-b-c
+		sig_a | sig_b | sig_c | sig_d | sig_e | sig_f | sig_g,	// 8 // 8 - a-b-c-d-e-f-g
+		sig_a | sig_b | sig_c | sig_d | sig_f | sig_g,			// 9 // 9 - a-b-c-d-f-g
+		sig_a | sig_b | sig_c | sig_e | sig_f | sig_g,			// 10 // A - a-b-c-e-f-g
+		sig_c | sig_d | sig_e | sig_f | sig_g,					// 11 // b - c-d-e-f-g
+		sig_a | sig_d | sig_e | sig_f ,							// 12 // c - a-d-e-f
+		sig_b | sig_c | sig_d | sig_e | sig_g,					// 13 // d - b-c-d-e-g
+		sig_a | sig_d | sig_e | sig_f | sig_g,					// 14 // E - a-d-e-f-g
+		sig_a | sig_e | sig_f | sig_g,							// 15 // F - a-e-f-g
+		sig_b | sig_c | sig_d | sig_e | sig_f,					// 16 // U
+		sig_c | sig_e | sig_g,									// 17 // n
+		sig_b | sig_c | sig_g | sig_e | sig_f,					// 18 // H
+		sig_c | sig_e | sig_f | sig_g,							// 19 // h
+		sig_g,													// 20 // -
+		sig_dp,													// 21 // DP
+		sig_e | sig_g											// 22 // r
+
+		//
 
 };
 
-
-
-
-unsigned short Digit_val_portA [23] = {
-		sig_a | sig_b | sig_f,				// 0 // 0 - a-b-c-d-e-f
-		sig_b,								// 1 // 1 - b-c
-		sig_a | sig_b | sig_g,				// 2 // 2 - a-b-d-e-g
-		sig_a | sig_b | sig_g,				// 3 // 3 - a-b-c-d-g
-		sig_b | sig_f | sig_g,				// 4 // 4 - b-c-f-g
-		sig_a | sig_f | sig_g,				// 5 // 5 - a-c-d-f-g
-		sig_a | sig_f | sig_g,				// 6 // 6 - a-c-d-e-f-g
-		sig_a | sig_b,						// 7 // 7 - a-b-c
-		sig_a | sig_b | sig_f | sig_g,		// 8 // 8 - a-b-c-d-e-f-g
-		sig_a | sig_b | sig_c | sig_f | sig_g,// 9 // 9 - a-b-c-d-f-g
-		sig_a | sig_b | sig_f | sig_g,		// 10 // A - a-b-c-e-f-g
-		sig_f | sig_g,						// 11 // b - c-d-e-f-g
-		sig_a | sig_f,						// 12 // c - a-d-e-f
-		sig_b | sig_g,						// 13 // d - b-c-d-e-g
-		sig_a | sig_f | sig_g,				// 14 // E - a-d-e-f-g
-		sig_a | sig_f | sig_g,				// 15 // F - a-e-f-g
-		sig_b | sig_f,						// 16 // U
-		sig_g,								// 17 // n
-		sig_b | sig_g | sig_f,				// 18 // H
-		sig_f | sig_g,						// 19 // h
-		sig_g,								// 20 // -
-		sig_g								// 22 // r
-};
 
 unsigned short DIG_0;
 unsigned short DIG_1;
